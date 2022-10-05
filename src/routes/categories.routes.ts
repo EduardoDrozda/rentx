@@ -1,7 +1,7 @@
+import { CreateCategoryController } from "../modules/cars/useCases/createCategory/CreateCategoryController";
+import { ImportCategoryController } from "../modules/cars/useCases/importCategory/ImportCategoryController";
+import { ListCategoryController } from "../modules/cars/useCases/listCategories/ListCategoryController";
 import { Router } from "express";
-import createCategoryController from "../modules/cars/useCases/createCategory";
-import importCategoryController from "../modules/cars/useCases/importCategory";
-import listCategoryController from "../modules/cars/useCases/listCategories";
 import multer from "multer";
 
 const upload = multer({
@@ -10,20 +10,18 @@ const upload = multer({
 
 const categoriesRoutes = Router();
 
-categoriesRoutes.post("/", async (request, response) => {
-  return await createCategoryController().handle(request, response);
-});
+const createCategoryController = new CreateCategoryController();
+const listCategoryController = new ListCategoryController();
+const importCategoryController = new ImportCategoryController();
 
-categoriesRoutes.get("/", async (request, response) => {
-  return await listCategoryController().handle(request, response);
-});
+categoriesRoutes.post("/", createCategoryController.handle);
+
+categoriesRoutes.get("/", listCategoryController.handle);
 
 categoriesRoutes.post(
   "/import",
   upload.single("file"),
-  async (request, response) => {
-    return await importCategoryController().handle(request, response);
-  }
+  importCategoryController.handle
 );
 
 export { categoriesRoutes };
