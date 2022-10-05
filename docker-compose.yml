@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  db:
+    image: postgres
+    container_name: rentx__db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=rentx__db
+    volumes:
+      - pgdata:/data/postgres
+  app:
+    container_name: rentx__app
+    build:
+      context: .
+      dockerfile: .docker/node/Dockerfile
+    volumes:
+      - .:/usr/app
+    ports:
+      - 3333:3333
+    links:
+      - db
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
+    driver: local
